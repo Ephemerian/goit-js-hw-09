@@ -39,7 +39,7 @@ function onStartBtnClick() {
   setInterval(() => setTimerToHTML(convertMs(difference)), 1000);
 }
 
-// Difference between real time and choosed time
+// Difference between real time and needed time
 function calculateDifferenceTime(setTime) {
   refs.startBtn.removeAttribute('disabled');
   const intervalId = setInterval(() => {
