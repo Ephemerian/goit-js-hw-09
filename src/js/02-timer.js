@@ -1,7 +1,5 @@
 import flatpickr from 'flatpickr';
-
 import 'flatpickr/dist/flatpickr.min.css';
-
 import { Report } from 'notiflix/build/notiflix-report-aio';
 
 // DOM
@@ -10,6 +8,9 @@ const refs = {
   startBtn: document.querySelector('[data-start]'),
   timerEl: document.querySelector('.timer'),
 };
+
+// Setting the start button as disabled initially
+refs.startBtn.setAttribute('disabled', '');
 
 // Event action
 refs.startBtn.addEventListener('click', onStartBtnClick, { once: true });
@@ -21,7 +22,6 @@ const options = {
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-
   onClose(selectedDates) {
     if (selectedDates[0].getTime() < Date.now()) {
       refs.startBtn.setAttribute('disabled', '');
@@ -35,34 +35,32 @@ const options = {
 flatpickr(refs.inputEl, options);
 
 function onStartBtnClick() {
+  refs.startBtn.setAttribute('disabled', '');
+  refs.inputEl.setAttribute('disabled', '');
   // Showing timer
   setInterval(() => setTimerToHTML(convertMs(difference)), 1000);
 }
 
-// Difference between real time and needed time
 function calculateDifferenceTime(setTime) {
   refs.startBtn.removeAttribute('disabled');
   const intervalId = setInterval(() => {
     difference = new Date(setTime) - Date.now();
     if (difference < 1000) {
       clearInterval(intervalId);
+      refs.inputEl.removeAttribute('disabled');
       return;
     }
   }, 1000);
 }
 
-// Timer value
 function setTimerToHTML({ days, hours, minutes, seconds }) {
-  // Days, hours, minutes, seconds in timer
   refs.timerEl.children[0].querySelector('.value').innerText = addLeadingZero(days);
   refs.timerEl.children[1].querySelector('.value').innerText = addLeadingZero(hours);
   refs.timerEl.children[2].querySelector('.value').innerText = addLeadingZero(minutes);
   refs.timerEl.children[3].querySelector('.value').innerText = addLeadingZero(seconds);
 }
 
-// Converting milliseconds to days, hours, minutes, seconds
 function convertMs(ms) {
-  // Amount of milliseconds per unit of time
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
@@ -76,7 +74,6 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-// Adds a '0' to a number
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
